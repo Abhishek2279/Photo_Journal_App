@@ -25,42 +25,37 @@ const DataSlice = createSlice({
                 state.dailyUpdate[0] = action.payload
             }
             else {
-
                 state.dailyUpdate = [action.payload, ...state.dailyUpdate];
             }
-            if (!state.maxTemp || action.payload.temperature > state.maxTemp) {
+            if (state.maxTemp === null || state.minTemp === null) {
                 state.maxTemp = {
                     temp: action.payload.temperature,
                     date: action.payload.date?.toLocaleDateString('en-US', options)
                 };
-            }
-            if (!state.minTemp || action.payload.temperature < state.minTemp) {
                 state.minTemp = {
                     temp: action.payload.temperature,
                     date: action.payload.date?.toLocaleDateString('en-US', options)
                 };
-            }
-        },
-        updateData: (state, action) => {
-            state.dailyUpdate[0] = action.payload
-            if (!state.maxTemp || action.payload.temperature > state.maxTemp) {
-                state.maxTemp = {
-                    temp: action.payload.temperature,
-                    date: action.payload.date?.toLocaleDateString('en-US', options)
-                };
-            }
-            if (!state.minTemp || action.payload.temperature < state.minTemp) {
-                state.minTemp = {
-                    temp: action.payload.temperature,
-                    date: action.payload.date?.toLocaleDateString('en-US', options)
-                };
+            } else {
+                if (action.payload.temperature > state.maxTemp.temp) {
+
+                    state.maxTemp = {
+                        temp: action.payload.temperature,
+                        date: action.payload.date?.toLocaleDateString('en-US', options)
+                    };
+                }
+                if (action.payload.temperature < state.minTemp.temp) {
+                    state.minTemp = {
+                        temp: action.payload.temperature,
+                        date: action.payload.date?.toLocaleDateString('en-US', options)
+                    };
+                }
             }
         },
     },
 });
 
 export const addData = DataSlice.actions.addData;
-export const updateData = DataSlice.actions.updateData;
 export const dailyUpdate = state => state.dailyData.dailyUpdate;
 export const maxTemp = state => state.dailyData.maxTemp;
 export const minTemp = state => state.dailyData.minTemp;

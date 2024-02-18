@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, TextInput } from 'react-native'
 import React, { forwardRef, memo, useImperativeHandle, useState } from 'react'
 
 const CustomInput = forwardRef((props, ref) => {

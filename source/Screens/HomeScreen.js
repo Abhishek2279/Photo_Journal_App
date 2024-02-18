@@ -1,9 +1,7 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { memo, useCallback } from 'react'
 import { GlobalStyle, dummy, month } from '../constants/globalstyle'
-import { width } from '../constants/Dimensions';
 import { Fonts, Images, colors } from '../Assets';
-import FastImage from 'react-native-fast-image';
 import { useSelector } from 'react-redux';
 import { dailyUpdate } from '../Redux/DailyData';
 import CustomImage from '../utils/CustomImage';

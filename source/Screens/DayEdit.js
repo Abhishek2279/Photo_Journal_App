@@ -6,15 +6,17 @@ import CustomInput from '../utils/CustomInput';
 import { Fonts, Images, colors } from '../Assets';
 import FastImage from 'react-native-fast-image';
 import { useDispatch, useSelector } from 'react-redux';
-import { addData, dailyUpdate, updateData } from '../Redux/DailyData';
+import { addData, dailyUpdate } from '../Redux/DailyData';
 import ImagePicker from 'react-native-image-crop-picker';
 import { fetchLocation } from '../utils/FetchLocation';
 import { Screens } from '../constants/NavConstants';
+import Loader from '../utils/Loader';
 
 const DayEdit = ({ navigation }) => {
     const dailyData = useSelector(dailyUpdate);
-    const dispatch = useDispatch()
-    const inputRef = useRef()
+    const dispatch = useDispatch();
+    const inputRef = useRef();
+    const loaderRef = useRef();
 
     const saveHandler = useCallback(() => {
         dispatch(addData({
@@ -25,15 +27,21 @@ const DayEdit = ({ navigation }) => {
     }, [dailyData])
 
     const getTemperatureHandler = useCallback(async (imgPath) => {
-        const result = await fetchLocation()
-        dispatch(addData({
-            image: imgPath,
-            date: new Date(),
-            location: result?.city?.name + ', ' + result?.city?.country,
-            temperature: result?.list[0]?.main?.temp,
-            thoughts: inputRef.current?.value(),
-        }))
-
+        try {
+            loaderRef.current?.start();
+            const result = await fetchLocation()
+            dispatch(addData({
+                image: imgPath,
+                date: new Date(),
+                location: result?.city?.name + ', ' + result?.city?.country,
+                temperature: result?.list[0]?.main?.temp,
+                thoughts: inputRef.current?.value(),
+            }))
+        } catch (e) {
+            console.log(e);
+        } finally {
+            loaderRef.current?.stop();
+        }
     }, [])
 
     const OpenCameraHandler = useCallback(() => {
@@ -59,6 +67,7 @@ const DayEdit = ({ navigation }) => {
             <Pressable onPress={saveHandler}>
                 <Text style={styles.save}>{'Save'}</Text>
             </Pressable>
+            <Loader ref={loaderRef} />
         </View>
     )
 }

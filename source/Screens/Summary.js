@@ -7,27 +7,20 @@ import { GlobalStyle } from '../constants/globalstyle'
 import { ScrollView } from 'react-native-gesture-handler'
 import CustomDetail from '../utils/CustomDetail'
 
-const options = {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-};
-
 const Summary = () => {
     const dailyData = useSelector(dailyUpdate);
     const max = useSelector(maxTemp);
     const min = useSelector(minTemp);
 
-    const day1 = new Date();
-    const day2 = new Date(dailyData[0]?.date);
-    const numDays = parseInt((day2 - day1) / (1000 * 3600 * 24))
+    const day2 = new Date();
+    const day1 = new Date(dailyData[dailyData?.length - 1]?.date);
+    const numDays = Math.ceil((day2 - day1) / (1000 * 3600 * 24)) + 1
 
     return (
         <ScrollView style={[GlobalStyle.root, { padding: 20 }]}>
             {dailyData?.length > 0 ?
                 <>
-                    <CustomDetail title={'Days'} data={dailyData?.length + '/' + (numDays + 1)} text={`You have recored ${dailyData?.length} days since the first day`} />
+                    <CustomDetail title={'Days'} data={dailyData?.length + '/' + numDays} text={`You have recored ${dailyData?.length} days since the first day`} />
                     <CustomDetail title={'Hottest day'} data={max?.temp + '˚'} text={max?.date} />
                     <CustomDetail title={'Coldest day'} data={min?.temp + '˚'} text={max?.date} />
                 </>

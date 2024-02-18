@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { memo, useCallback, useRef, useState } from 'react';
+import React, { memo, useCallback, useRef } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { Screens } from '../constants/NavConstants';
 import { Images, colors } from '../Assets';
@@ -8,18 +8,19 @@ import FastImage from 'react-native-fast-image';
 import CustomHeader from '../utils/CustomHeader';
 import Summary from '../Screens/Summary';
 import ImagePicker from 'react-native-image-crop-picker';
-import { getLocation } from 'react-native-weather-api';
 import { useDispatch } from 'react-redux';
 import { addData } from '../Redux/DailyData';
 import { fetchLocation } from '../utils/FetchLocation';
 import { PERMISSIONS, check } from 'react-native-permissions';
 import Popup from '../utils/Popup';
+import Loader from '../utils/Loader';
 
 const Tabs = createBottomTabNavigator();
 
 const BottomTabs = ({ navigation }) => {
     const dispatch = useDispatch();
-    const popupRef = useRef()
+    const popupRef = useRef();
+    const loaderRef = useRef();
 
     const tabButton = useCallback(
         (focused, imageActive, imageInactive) => {
@@ -39,15 +40,22 @@ const BottomTabs = ({ navigation }) => {
     }, [])
 
     const getTemperatureHandler = useCallback(async (imgPath) => {
-        const result = await fetchLocation()
-        dispatch(addData({
-            image: imgPath,
-            date: new Date(),
-            location: result?.city?.name + ', ' + result?.city?.country,
-            temperature: result?.list[0]?.main?.temp,
-            thoughts: '',
-        }))
-        navHandler()
+        try {
+            loaderRef.current?.start();
+            const result = await fetchLocation()
+            dispatch(addData({
+                image: imgPath,
+                date: new Date(),
+                location: result?.city?.name + ', ' + result?.city?.country,
+                temperature: result?.list[0]?.main?.temp,
+                thoughts: '',
+            }))
+            navHandler()
+        } catch (e) {
+            console.log(e);
+        } finally {
+            loaderRef.current?.stop();
+        }
     }, [])
 
     const permissionHandler = useCallback(async () => {
@@ -80,15 +88,10 @@ const BottomTabs = ({ navigation }) => {
     return (
         <>
             <Tabs.Navigator
-                // sceneContainerStyle={{ backgroundColor: 'transparent' }}
                 screenOptions={{
                     tabBarShowLabel: false,
-                    // tabBarBackground: () => <CustomTabBar />,
                     tabBarStyle: [styles.tabBar],
                     header: () => <CustomHeader />
-                    // headerTitleAlign: 'center',
-                    // headerTitleStyle: styles.title,
-                    // headerStyle: { backgroundColor: 'transparent' },
                 }}>
                 <Tabs.Screen
                     name={Screens.Home}
@@ -112,6 +115,7 @@ const BottomTabs = ({ navigation }) => {
                 <FastImage source={Images.plus} resizeMode='contain' style={styles.plus} />
             </Pressable>
             <Popup ref={popupRef} title={'Allow Access!'} description={'Open settings to give permissions...'} onConfirm={openSettingHandler} />
+            <Loader ref={loaderRef} />
         </>
 
     )

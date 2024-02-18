@@ -6,7 +6,7 @@ import Modal from 'react-native-modal'
 
 const Popup = forwardRef((prop, ref) => {
     const [visible, setVisible] = useState(false);
-    const { cancelText, confirmText, title, description, onConfirm } = prop;
+    const { title, description, onConfirm } = prop;
 
     useImperativeHandle(
         ref,

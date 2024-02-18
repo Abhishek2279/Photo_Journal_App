@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { memo, useCallback } from 'react'
-import { Fonts, Images, colors } from '../Assets'
+import { Fonts, colors } from '../Assets'
 import FastImage from 'react-native-fast-image'
 
 const CustomHeader = ({ navigation, backArrow }) => {

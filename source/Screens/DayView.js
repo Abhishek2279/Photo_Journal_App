@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, Pressable } from 'react-native'
 import React, { memo, useCallback } from 'react'
 import { Fonts, colors } from '../Assets'
 import CustomImage from '../utils/CustomImage'
-import FastImage from 'react-native-fast-image'
 import { GlobalStyle } from '../constants/globalstyle'
 import { Screens } from '../constants/NavConstants'
 
